@@ -1,18 +1,30 @@
+import math
 from time import time
 
 from PIL import Image, ImageDraw
 
-from mandelbrot import mandelbrot, MAX_ITER
+from mandelbrot import mandelbrot
+from julia import julia
+
+
+MAX_ITER = 80
 
 # Image size (pixels)
-WIDTH = 3000
-HEIGHT = 1500
+WIDTH = 30000
+HEIGHT = 15000
 
 # Plot window
 RE_START = -1.5
 RE_END = -0.5
 IM_START = -0.25
 IM_END = 0.25
+
+# c constant used to compute the Julia set
+# c = complex(0.285, 0.01)
+# Other interesting values:
+# c = complex(-0.7269, 0.1889)
+# c = complex(-0.8, 0.156)
+# c = complex(-0.4, 0.6)
 
 mappings = {
     'wikipedia': [
@@ -36,11 +48,13 @@ mappings = {
 
 
 def produce_image(mapping):
+    start_time = time()
+
     im = Image.new('RGB', (WIDTH, HEIGHT), (0, 0, 0))
     draw = ImageDraw.Draw(im)
 
     for x in range(0, WIDTH):
-        print(f'@ {x}th range of pixels')
+        print(f'@ {x}th range of pixels [{time() - start_time}]')
         for y in range(0, HEIGHT):
             # Convert pixel coordinate to complex number
             c = complex(RE_START + (x / WIDTH) * (RE_END - RE_START),
@@ -59,12 +73,12 @@ def produce_image(mapping):
 
     im.save('output/plot.png', 'PNG')
 
-
-def main():
-    start_time = time()
-    produce_image(mappings['wikipedia'])
     duration = time() - start_time
     print(f'Operation took {round(duration, 2)} seconds')
+
+
+def main():
+    produce_image(mappings['wikipedia'])
 
 
 if __name__ == '__main__':
